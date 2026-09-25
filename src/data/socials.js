@@ -29,7 +29,7 @@ export const socialLinks = [
   {
     name: "Instagram",
     label: "Instagram",
-    value: "@arifshekh.ai",
+    value: "@web_developer_.18",
     url: "https://instagram.com/web_developer_.18",
     icon: "Instagram",
     description: "Behind-the-scenes engineering & technology highlights",
