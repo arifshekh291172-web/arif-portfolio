@@ -10,11 +10,11 @@
  *    projects, education, codebases, and contact handles.
  */
 
-import { API_BASE_URL, fetchWithTimeout } from './api';
-import { profileData } from '../data/profile';
-import { projectsData } from '../data/projects';
-import { skillsData } from '../data/skills';
-import { socialLinks } from '../data/socials';
+import { API_BASE_URL, fetchWithTimeout } from './api.js';
+import { profileData } from '../data/profile.js';
+import { projectsData } from '../data/projects.js';
+import { skillsData } from '../data/skills.js';
+import { socialLinks } from '../data/socials.js';
 
 // System prompt grounding for real Gemini LLM
 const ARIF_SYSTEM_INSTRUCTION = `
@@ -56,7 +56,7 @@ export async function sendMessage(message, customApiKey = '') {
     throw new Error('Message cannot be empty.');
   }
 
-  const geminiKey = customApiKey || import.meta.env.VITE_GEMINI_API_KEY || '';
+  const geminiKey = customApiKey || (typeof import.meta !== 'undefined' && import.meta.env?.VITE_GEMINI_API_KEY) || '';
 
   // 1. Live Google Gemini API Integration
   if (geminiKey) {

@@ -4,8 +4,8 @@
  * when environment variables are not configured.
  */
 
-export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
-export const GITHUB_USERNAME = import.meta.env.VITE_GITHUB_USERNAME || '';
+export const API_BASE_URL = (typeof import.meta !== 'undefined' && import.meta.env?.VITE_API_BASE_URL) || '';
+export const GITHUB_USERNAME = (typeof import.meta !== 'undefined' && import.meta.env?.VITE_GITHUB_USERNAME) || '';
 
 export async function fetchWithTimeout(resource, options = {}) {
   const { timeout = 8000 } = options;
