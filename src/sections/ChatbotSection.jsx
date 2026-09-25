@@ -1,15 +1,14 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { Send, Bot, User, Sparkles, Terminal, RefreshCw, CheckCircle2 } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Send, Bot, User, Sparkles, Terminal, RefreshCw, Key, ShieldCheck, Check } from 'lucide-react';
 import { sendMessage } from '../services/chatbot';
-import { API_BASE_URL } from '../services/api';
 
 const suggestedPrompts = [
-  "What technologies does Arif use?",
-  "Tell me about his AI projects.",
-  "What computer vision projects has he built?",
-  "What is his tech stack?",
-  "What is his education?",
+  "Arif ke projects ke baare mein batao",
+  "How to contact Arif directly?",
+  "Tell me about his Computer Vision projects",
+  "What is his education & college?",
+  "Can Arif build RAG and IoT systems?",
 ];
 
 export default function ChatbotSection() {
@@ -17,12 +16,14 @@ export default function ChatbotSection() {
     {
       id: 'welcome-1',
       sender: 'assistant',
-      text: "Hello! I am Arif Shekh's portfolio assistant. You can ask me about his AI/ML pipelines, Computer Vision systems, IoT prototypes, full-stack technologies, or diploma education.",
+      text: "Namaste! Main Arif Shekh ka personal AI Assistant hoon. Arif Theem College of Engineering mein AI & ML ka final year student hai. Aap mujhse uske real AI/ML, Computer Vision, IoT projects, skills ya direct contact ke baare mein kuch bhi pooch sakte ho!",
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
     },
   ]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [geminiKey, setGeminiKey] = useState('');
+  const [showKeyInput, setShowKeyInput] = useState(false);
   const messagesEndRef = useRef(null);
 
   const scrollToBottom = () => {
@@ -49,7 +50,7 @@ export default function ChatbotSection() {
     setIsLoading(true);
 
     try {
-      const response = await sendMessage(query.trim());
+      const response = await sendMessage(query.trim(), geminiKey);
       const botMsg = {
         id: `assistant-${Date.now()}`,
         sender: 'assistant',
@@ -62,7 +63,7 @@ export default function ChatbotSection() {
       const errorMsg = {
         id: `assistant-${Date.now()}`,
         sender: 'assistant',
-        text: "I encountered an error trying to process your inquiry. Please feel free to try again or reach out directly through the contact section.",
+        text: "Error processing query. Please check your network or try again.",
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       };
       setMessages((prev) => [...prev, errorMsg]);
@@ -83,7 +84,7 @@ export default function ChatbotSection() {
       {
         id: `welcome-${Date.now()}`,
         sender: 'assistant',
-        text: "Conversation refreshed. What would you like to know about Arif's engineering background or projects?",
+        text: "Chat refreshed. Arif ke baare mein aap kya jaanna chahte hain?",
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       },
     ]);
@@ -102,15 +103,15 @@ export default function ChatbotSection() {
             Talk to Arif's AI Assistant
           </h2>
           <p className="text-slate-400 text-sm sm:text-base max-w-xl mt-3">
-            Ask about my skills, projects, technologies, experience, education or development interests.
+            Ask about my real skills, projects, computer vision algorithms, IoT prototypes, education, or contact details.
           </p>
           <div className="w-16 h-1 bg-gradient-to-r from-cyan-400 to-purple-500 rounded-full mt-4" />
         </div>
 
         {/* Chat Interface Container */}
-        <div className="glass-panel rounded-3xl border border-cyan-500/30 shadow-2xl shadow-cyan-950/40 overflow-hidden flex flex-col h-[580px]">
+        <div className="glass-panel rounded-3xl border border-cyan-500/30 shadow-2xl shadow-cyan-950/40 overflow-hidden flex flex-col h-[600px]">
           {/* Top Chat Header */}
-          <div className="p-4 sm:p-5 bg-slate-900/90 border-b border-white/10 flex items-center justify-between">
+          <div className="p-4 sm:p-5 bg-slate-900/90 border-b border-white/10 flex flex-wrap items-center justify-between gap-3">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl bg-cyan-500/10 border border-cyan-500/40 flex items-center justify-center text-cyan-400 shadow-glow-cyan">
                 <Bot size={20} />
@@ -123,23 +124,65 @@ export default function ChatbotSection() {
                   <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
                 </div>
                 <div className="text-[11px] font-mono text-slate-400">
-                  {API_BASE_URL ? (
-                    <span className="text-cyan-400">● LIVE BACKEND CONNECTED</span>
+                  {geminiKey ? (
+                    <span className="text-cyan-400 font-semibold">● LIVE GEMINI 1.5 PRO ACTIVE</span>
                   ) : (
-                    <span>● GROUNDED KNOWLEDGE ENGINE</span>
+                    <span className="text-emerald-400">● REAL-TIME KNOWLEDGE ENGINE ACTIVE</span>
                   )}
                 </div>
               </div>
             </div>
 
-            <button
-              onClick={handleClearChat}
-              title="Reset conversation"
-              className="p-2 rounded-xl bg-slate-800/80 border border-white/5 text-slate-400 hover:text-white hover:border-cyan-500/40 transition-colors"
-            >
-              <RefreshCw size={15} />
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setShowKeyInput(!showKeyInput)}
+                title="Connect custom Gemini API key for unrestricted live LLM generation"
+                className={`p-2 rounded-xl border text-xs font-mono flex items-center gap-1.5 transition-all ${
+                  geminiKey
+                    ? 'bg-cyan-500/20 text-cyan-300 border-cyan-500/50'
+                    : 'bg-slate-800/80 border-white/10 text-slate-400 hover:text-white'
+                }`}
+              >
+                <Key size={14} />
+                <span className="hidden sm:inline">{geminiKey ? 'Gemini Linked' : 'Connect Gemini API'}</span>
+              </button>
+
+              <button
+                onClick={handleClearChat}
+                title="Reset conversation"
+                className="p-2 rounded-xl bg-slate-800/80 border border-white/5 text-slate-400 hover:text-white hover:border-cyan-500/40 transition-colors"
+              >
+                <RefreshCw size={15} />
+              </button>
+            </div>
           </div>
+
+          {/* Optional Gemini API Key Drawer */}
+          <AnimatePresence>
+            {showKeyInput && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: 'auto', opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                className="p-3 bg-slate-950 border-b border-cyan-500/20 flex flex-col sm:flex-row items-center gap-2"
+              >
+                <input
+                  type="password"
+                  placeholder="Paste your Google Gemini API Key here (Optional)..."
+                  value={geminiKey}
+                  onChange={(e) => setGeminiKey(e.target.value)}
+                  className="flex-1 bg-slate-900 border border-white/10 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-cyan-400 font-mono w-full"
+                />
+                <button
+                  onClick={() => setShowKeyInput(false)}
+                  className="px-3 py-1.5 rounded-lg bg-cyan-500 text-slate-950 font-bold text-xs font-mono uppercase flex items-center gap-1 w-full sm:w-auto justify-center"
+                >
+                  <Check size={14} />
+                  <span>Save Key</span>
+                </button>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           {/* Messages Scroll Area */}
           <div className="flex-1 p-4 sm:p-6 overflow-y-auto space-y-4 bg-slate-950/60">
@@ -148,7 +191,7 @@ export default function ChatbotSection() {
               return (
                 <div
                   key={msg.id}
-                  className={`flex gap-3 max-w-[85%] sm:max-w-[75%] ${
+                  className={`flex gap-3 max-w-[88%] sm:max-w-[80%] ${
                     isUser ? 'ml-auto flex-row-reverse' : 'mr-auto'
                   }`}
                 >
@@ -172,8 +215,13 @@ export default function ChatbotSection() {
                     >
                       {msg.text}
                     </div>
-                    <span className="text-[10px] font-mono text-slate-500 mt-1 px-1">
-                      {msg.timestamp}
+                    <span className="text-[10px] font-mono text-slate-500 mt-1 px-1 flex items-center justify-between">
+                      <span>{msg.timestamp}</span>
+                      {msg.source && (
+                        <span className="text-cyan-400/80 uppercase text-[9px]">
+                          [{msg.source}]
+                        </span>
+                      )}
                     </span>
                   </div>
                 </div>
@@ -218,7 +266,7 @@ export default function ChatbotSection() {
           <div className="p-4 bg-slate-900/95 border-t border-white/10 flex items-center gap-3">
             <input
               type="text"
-              placeholder="Ask about my AI models, OpenCV, IoT, or education..."
+              placeholder="Ask anything in English or Hindi (e.g., Arif ke projects, college, email...)"
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyDown}
