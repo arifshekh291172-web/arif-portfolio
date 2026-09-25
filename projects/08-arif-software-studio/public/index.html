@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Arif Software Studio — AI &amp; Software Engineering</title>
+  <style>
+    body { background: #030712; color: #f8fafc; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 40px; }
+    .container { max-width: 1000px; margin: 0 auto; }
+    h1 { color: #00F0FF; font-family: monospace; font-size: 32px; margin-bottom: 5px; }
+    .subtitle { color: #94a3b8; font-size: 15px; margin-bottom: 30px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; margin-bottom: 40px; }
+    .card { background: #0B0F19; border: 1px solid rgba(255,255,255,0.08); border-radius: 20px; padding: 25px; transition: all 0.2s; }
+    .card:hover { border-color: rgba(0,240,255,0.4); transform: translateY(-3px); }
+    .card h3 { color: #fff; margin-top: 0; }
+    .meta { font-family: monospace; font-size: 12px; color: #00F0FF; margin-bottom: 10px; }
+    .form-panel { background: #0B0F19; border: 1px solid rgba(0,240,255,0.3); border-radius: 20px; padding: 30px; margin-top: 30px; }
+    input, select, textarea { width: 100%; box-sizing: border-box; background: #030712; border: 1px solid rgba(255,255,255,0.15); padding: 12px; border-radius: 10px; color: #fff; margin-bottom: 15px; }
+    button { background: linear-gradient(135deg, #00F0FF, #3B82F6); color: #030712; border: none; padding: 14px 28px; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 14px; font-family: monospace; text-transform: uppercase; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>ARIF SOFTWARE STUDIO</h1>
+    <p class="subtitle">Custom AI/ML Solutions, Computer Vision Systems &amp; Modern Web Platforms</p>
+
+    <div class="grid" id="serviceGrid">Loading engineering services...</div>
+
+    <div class="form-panel">
+      <h2 style="color: #00F0FF; margin-top: 0; font-family: monospace;">Initiate Project Consultation</h2>
+      <form id="inquiryForm">
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+          <div>
+            <label style="font-size:12px; font-family:monospace; color:#94a3b8;">YOUR NAME *</label>
+            <input type="text" id="clientName" required placeholder="Alex Johnson">
+          </div>
+          <div>
+            <label style="font-size:12px; font-family:monospace; color:#94a3b8;">EMAIL ADDRESS *</label>
+            <input type="email" id="clientEmail" required placeholder="alex@company.com">
+          </div>
+        </div>
+
+        <label style="font-size:12px; font-family:monospace; color:#94a3b8;">TARGET SERVICE *</label>
+        <select id="serviceSelect" required>
+          <option value="ai-rag">Generative AI &amp; RAG Systems</option>
+          <option value="cv-spatial">Computer Vision &amp; Gesture Control</option>
+          <option value="iot-embedded">IoT Firmware &amp; Sensor Networks</option>
+          <option value="fullstack-mern">Full-Stack Web Engineering</option>
+        </select>
+
+        <label style="font-size:12px; font-family:monospace; color:#94a3b8;">PROJECT BRIEF / SCOPE</label>
+        <textarea id="projectBrief" rows="4" placeholder="Describe the technical requirements, timeline or problem to solve..."></textarea>
+
+        <button type="submit">Submit Project Inquiry</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    fetch('/api/services')
+      .then(r => r.json())
+      .then(services => {
+        const grid = document.getElementById('serviceGrid');
+        grid.innerHTML = services.map(s => `
+          <div class="card">
+            <div class="meta">${s.category} • ${s.timeline}</div>
+            <h3>${s.title}</h3>
+            <p style="color:#94a3b8; font-size:13px; line-height:1.5;">${s.description}</p>
+            <div style="font-size:11px; font-family:monospace; color:#cbd5e1; margin-top:15px;">
+              DELIVERABLES: ${s.deliverables.join(' • ')}
+            </div>
+          </div>
+        `).join('');
+      });
+
+    document.getElementById('inquiryForm').onsubmit = (e) => {
+      e.preventDefault();
+      const payload = {
+        clientName: document.getElementById('clientName').value,
+        email: document.getElementById('clientEmail').value,
+        serviceId: document.getElementById('serviceSelect').value,
+        projectBrief: document.getElementById('projectBrief').value,
+      };
+
+      fetch('/api/inquiries', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      })
+      .then(r => r.json())
+      .then(res => {
+        alert(res.message);
+        document.getElementById('inquiryForm').reset();
+      });
+    };
+  </script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+{
+  "name": "right-source-hr",
+  "version": "1.0.0",
+  "description": "Right Source HR Recruitment Platform",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}
