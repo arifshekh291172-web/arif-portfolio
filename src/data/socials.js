@@ -2,8 +2,8 @@ export const socialLinks = [
   {
     name: "Email",
     label: "Email",
-    value: "arifshekh.developer@example.com",
-    url: "mailto:arifshekh.developer@example.com",
+    value: "arifshekh291172@gmail.com",
+    url: "mailto:arifshekh291172@gmail.com",
     icon: "Mail",
     description: "Direct email communication for opportunities & collaboration",
     accent: "#38bdf8"
@@ -30,7 +30,7 @@ export const socialLinks = [
     name: "Instagram",
     label: "Instagram",
     value: "@arifshekh.ai",
-    url: "https://instagram.com/arifshekh.ai",
+    url: "https://instagram.com/web_developer_.18",
     icon: "Instagram",
     description: "Behind-the-scenes engineering & technology highlights",
     accent: "#ec4899"
